@@ -101,7 +101,6 @@ if __name__ == '__main__':
     print(INTRO)
     time.sleep(5.0)
     logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-    logging.info('讀取 User-Agent 資料...')
     cp = configparser.ConfigParser(allow_no_value=True)
     try:
         cp.read('config.ini')
