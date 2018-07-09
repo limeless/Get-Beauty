@@ -1,6 +1,10 @@
 # Get-Beauty
 ptt.cc beauty board image downloader written in python 3+
 ![demo](https://user-images.githubusercontent.com/1501022/42469354-0599bb8e-83ea-11e8-93f0-482455e60cda.png)
+
+## 簡易的流程圖
+![SoftPic](https://user-images.githubusercontent.com/1501022/42471919-14733844-83f2-11e8-9074-1e7349eb9586.png)
+
 `config.ini` 內的設定跑掉或少行會自動修正  
 ```
 location: 'D:\Beauty' (def) 儲存文件的位置  
