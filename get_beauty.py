@@ -1,6 +1,7 @@
 from bs4 import BeautifulSoup
 from urllib.request import urlretrieve
 from fake_useragent import UserAgent
+from logging.handlers import TimedRotatingFileHandler
 import time, os, queue, threading, chardet, re, requests, logging, configparser
 
 INTRO = '''
@@ -52,7 +53,7 @@ def process_data(threadName, q):
             res = requests.get(url, headers=useragent)
             soup = BeautifulSoup(res.text, 'lxml')
             if len(soup.findAll('a', {'href':re.compile('http:\/\/i\.imgur\.com\/.*')})) > 0:
-                logging.info('{}: 正在尋找正妹……'.format(threadName))
+                logging.info('{}: 正在 {} 尋找圖檔……'.format(threadName, title))
                 for index, img_url in enumerate(soup.findAll('a', {'href':re.compile('http:\/\/i\.imgur\.com\/.*')})):
                     try:
                         urlretrieve(img_url['href'], '{}\{}_{}.jpg'.format(loc, title, index))
@@ -98,14 +99,29 @@ def getConfig(setting_key, default_value):
         return getConfig(setting_key, default_value)
     return value
 
+
+def setlog():
+    root = logging.getLogger()
+    if len(root.handlers) == 0: #避免重复
+        level = logging.DEBUG
+        filename = 'debug.log'
+        format = '%(asctime)s %(levelname)s %(module)s.%(funcName)s\n   Line:%(lineno)d%(message)s'
+        hdlr = TimedRotatingFileHandler(filename,'M' ,1 ,10 )
+        fmt = logging.Formatter(format)
+        hdlr.setFormatter(fmt)
+        root.addHandler(hdlr)
+        root.setLevel(level)
+        ch = logging.StreamHandler()
+        ch.setLevel(logging.INFO)
+        ch.setFormatter(fmt)
+        root.addHandler(ch)
+    return
+
+
 if __name__ == '__main__':
     print(INTRO)
     time.sleep(2.0)
-    logging.basicConfig(level=logging.DEBUG, format=LOG_FORMAT, handlers=[
-        logging.FileHandler("debug.log"),
-        logging.StreamHandler()
-    ])
-
+    setlog()
     cp = configparser.ConfigParser(allow_no_value=True)
     try:
         cp.read('config.ini')
