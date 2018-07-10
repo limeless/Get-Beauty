@@ -21,6 +21,7 @@ DEF_LOC = 'D:\Beauty'
 DEF_ENPP = '1200'
 DEF_TMPP = '0'
 BEAUTY_URL = 'https://www.ptt.cc/bbs/Beauty/index.html'
+LOG_FORMAT = '%(asctime)s - %(levelname)s - %(message)s'
 
 class myThread(threading.Thread):
     def __init__(self, threadID, name, q):
@@ -29,9 +30,9 @@ class myThread(threading.Thread):
         self.name = name
         self.q = q
     def run(self):
-        logging.info("開始線程 : " + self.name)
+        logging.debug("開始線程 : " + self.name)
         process_data(self.name, self.q)
-        logging.info("結束線程 : " + self.name)
+        logging.debug("結束線程 : " + self.name)
 
 def process_data(threadName, q):
     while not exitFlag:
@@ -55,9 +56,9 @@ def process_data(threadName, q):
                 for index, img_url in enumerate(soup.findAll('a', {'href':re.compile('http:\/\/i\.imgur\.com\/.*')})):
                     try:
                         urlretrieve(img_url['href'], '{}\{}_{}.jpg'.format(loc, title, index))
-                        logging.info('{}: {} {}_{}.jpg 下載成功!'.format(threadName, img_url['href'], title, index))
+                        logging.debug('{}: {} {}_{}.jpg 下載成功!'.format(threadName, img_url['href'], title, index))
                     except:
-                        logging.info('{}: {} {}_{}.jpg 下載失敗!'.format(threadName, img_url['href'], title, index))
+                        logging.debug('{}: {} {}_{}.jpg 下載失敗!'.format(threadName, img_url['href'], title, index))
                     
                     time.sleep(0.1)
         else:
@@ -99,8 +100,12 @@ def getConfig(setting_key, default_value):
 
 if __name__ == '__main__':
     print(INTRO)
-    time.sleep(5.0)
-    logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+    time.sleep(2.0)
+    logging.basicConfig(level=logging.DEBUG, format=LOG_FORMAT, handlers=[
+        logging.FileHandler("debug.log"),
+        logging.StreamHandler()
+    ])
+
     cp = configparser.ConfigParser(allow_no_value=True)
     try:
         cp.read('config.ini')
@@ -123,8 +128,8 @@ if __name__ == '__main__':
 
     if not os.path.exists(loc):
         os.makedirs(loc)
-
-    logging.info('讀取 User-Agent 資料...')    
+    
+    logging.debug('讀取 User-Agent 資料...')    
     ua = UserAgent()
     useragent = {'User-Agent': ua.random}
 
@@ -151,10 +156,10 @@ if __name__ == '__main__':
             threadID += 1
         
         queueLock.acquire()
-        logging.debug('目前頁面: {}'.format(pagenum))
+        logging.info('目前頁面: {}'.format(pagenum))
         curres = 'https://www.ptt.cc/bbs/Beauty/index{}.html'.format(pagenum)
         useragent = {'User-Agent': ua.random}
-        logging.info('UA:{}'.format(useragent))
+        logging.debug('UA:{}'.format(useragent))
         res = requests.get(curres, headers=useragent)
         soup = BeautifulSoup(res.text, 'lxml')
         logging.info('Loading page: {}'.format(curres))
