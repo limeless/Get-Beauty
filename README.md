@@ -1,7 +1,7 @@
-# Ptt-Image-Downloader
-PTT.cc multi-thread image downloader written in python 3+
+# Ptt 爬圖工具
+PTT.cc multi-thread image crawer written for python 3+
 
-###目前只支持 imgur 下載空間。
+*目前只支持 imgur 空間。*
 
 ![demo](https://user-images.githubusercontent.com/1501022/42469354-0599bb8e-83ea-11e8-93f0-482455e60cda.png)
 

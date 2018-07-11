@@ -17,9 +17,9 @@ COPYRIGHT 2018                     PTT 爬圖工具
     '''
 
 DEF_SECTION = 'Config'
-DEF_THDS = '10'
+DEF_THDS = '3'
 DEF_LOC = "D:\\"
-DEF_ENPP = '1200'
+DEF_ENPP = '0'
 DEF_TMPP = '0'
 DEF_URL = 'https://www.ptt.cc/bbs/'
 DEF_BOARD = 'Beauty'
@@ -121,7 +121,7 @@ def setlog():
         root.addHandler(hdlr)
         root.setLevel(level)
         ch = logging.StreamHandler()
-        ch.setLevel(logging.DEBUG)
+        ch.setLevel(logging.INFO)
         ch.setFormatter(fmt)
         root.addHandler(ch)
     return
