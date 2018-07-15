@@ -63,7 +63,6 @@ def process_data(threadName, q):
                     except:
                         logging.debug('{}: {} {}_{}.jpg 下載失敗!'.format(threadName, img_url['href'], title, index))
                         logging.debug('{}{}\\{}_{}.jpg'.format(loc, board, title, index))
-                    
                     time.sleep(0.1)
         else:
             queueLock.release()
@@ -130,7 +129,6 @@ def setlog():
 def filter_title(title):
     for x in filt:
         if x in title:
-            logging.info('條件符合, 跳過 {}'.format(title))
             return None
         else:
             return title
@@ -169,6 +167,9 @@ if __name__ == '__main__':
     logging.debug(' 讀取 User-Agent 資料...')    
     ua = UserAgent()
     useragent = {'User-Agent': ua.random}
+    if thds > 20:
+        thds = 20
+        logging.info('PTT 一頁只有 20 篇文章，線程更改為 20.')
 
     if tmpp == 0:
         pagenum = get_latest_page(DEF_URL, useragent)
@@ -209,7 +210,9 @@ if __name__ == '__main__':
                 pass
 
             elif filter_title(title) == None:
+                logging.info('條件符合, 跳過 {}'.format(title))
                 pass
+
             else:
                 temp_list.append(url)
                 temp_list.append(title)
@@ -232,6 +235,6 @@ if __name__ == '__main__':
         cp.set(DEF_SECTION, 'temp_page', str(pagenum))
         with open('config.ini', 'w') as f:
             cp.write(f)
+        time.sleep(2.0)
 
-        time.sleep(0.2)
     logging.info(' ALL DONE')
