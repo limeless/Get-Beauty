@@ -18,7 +18,12 @@ COPYRIGHT 2018                     PTT 爬圖工具
 
 DEF_SECTION = 'Config'
 DEF_THDS = '3'
-DEF_LOC = "D:\\"
+if os == 'nt':
+    DEF_PREFIX = '\\'
+    DEF_LOC = os.getcws() + '\\'
+else:
+    DEF_PREFIX = '/'
+    DEF_LOC = os.getcwd() + '/'
 DEF_ENPP = '0'
 DEF_TMPP = '0'
 DEF_URL = 'https://www.ptt.cc/bbs/'
@@ -58,11 +63,11 @@ def process_data(threadName, q):
                 logging.info('{}: 正在 {} 尋找圖檔……'.format(threadName, title))
                 for index, img_url in enumerate(soup.findAll('a', {'href':re.compile('http:\/\/i\.imgur\.com\/.*')})):
                     try:
-                        urlretrieve(img_url['href'], '{}{}\\{}_{}.jpg'.format(loc, board, title, index))
+                        urlretrieve(img_url['href'], '{}{}{}{}_{}.jpg'.format(loc, board, DEF_PREFIX, title, index))
                         logging.debug('{}: {} {}_{}.jpg 下載成功!'.format(threadName, img_url['href'], title, index))
                     except:
                         logging.debug('{}: {} {}_{}.jpg 下載失敗!'.format(threadName, img_url['href'], title, index))
-                        logging.debug('{}{}\\{}_{}.jpg'.format(loc, board, title, index))
+                        logging.debug('{}{}{}{}_{}.jpg'.format(loc, board, DEF_PREFIX, title, index))
                     time.sleep(0.1)
         else:
             queueLock.release()
@@ -84,7 +89,7 @@ def get_latest_page(url, ua):
 def gencfg():
     cp.add_section(DEF_SECTION)
     section = cp[DEF_SECTION]
-    section['location'] = DEF_LOC
+    #section['location'] = DEF_LOC
     section['board'] = DEF_BOARD
     section['threads'] = DEF_THDS
     section['temp_page'] = DEF_TMPP
@@ -120,7 +125,7 @@ def setlog():
         root.addHandler(hdlr)
         root.setLevel(level)
         ch = logging.StreamHandler()
-        ch.setLevel(logging.INFO)
+        ch.setLevel(logging.DEBUG)
         ch.setFormatter(fmt)
         root.addHandler(ch)
     return
@@ -153,7 +158,8 @@ if __name__ == '__main__':
     except:
         cp.add_section(DEF_SECTION)
 
-    loc = getConfig('location', DEF_LOC)
+    #loc = getConfig('location', DEF_LOC)
+    loc = DEF_LOC
     board = getConfig('board', DEF_BOARD)
     thds = int(getConfig('threads', DEF_THDS))
     endp = int(getConfig('end_page', DEF_ENPP))
@@ -161,8 +167,8 @@ if __name__ == '__main__':
     filt = getConfig('filter', DEF_FILTER).split(',')
     logging.debug(filt)
 
-    if not os.path.exists(loc+'\\'+board):
-        os.makedirs(loc+'\\'+board)
+    if not os.path.exists(loc + DEF_PREFIX + board):
+        os.makedirs(loc + DEF_PREFIX + board)
     
     logging.debug(' 讀取 User-Agent 資料...')    
     ua = UserAgent()
