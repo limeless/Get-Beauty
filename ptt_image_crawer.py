@@ -17,7 +17,7 @@ COPYRIGHT 2018                     PTT 爬圖工具
     '''
 
 DEF_SECTION = 'Config'
-DEF_THDS = '3'
+DEF_THDS = '10'
 if os == 'nt':
     DEF_PREFIX = '\\'
     DEF_LOC = os.getcws() + '\\'
