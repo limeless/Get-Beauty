@@ -30,6 +30,7 @@ DEF_URL = 'https://www.ptt.cc/bbs/'
 DEF_BOARD = 'Beauty'
 DEF_FILTER = '公告,男,帥哥,鮮肉'
 DEF_TITLE_HEAD = ['Re: ', 'Fw: ']
+DEF_COOKIES = {'over18': '1'}
 
 LOG_FORMAT = '%(asctime)s - %(levelname)s - %(message)s'
 
@@ -53,7 +54,7 @@ def process_data(threadName, q):
             url = temp_list[0]
             title = temp_list[1]
             useragent = temp_list[2]
-            res = requests.get(url, headers=useragent, cookies={'over18': '1'})
+            res = requests.get(url, headers=useragent, cookies=DEF_COOKIES)
             soup = BeautifulSoup(res.text, 'lxml')
             if len(soup.findAll('a', {'href':re.compile('http:\/\/i\.imgur\.com\/.*')})) > 0:
                 for x in DEF_TITLE_HEAD:
@@ -76,7 +77,7 @@ def process_data(threadName, q):
 def get_latest_page(url, ua):
     url = url + board + '/index.html'
     logging.debug(' requesting page: {}'.format(url))
-    res = requests.get(url, headers=ua, cookies={'over18': '1'})
+    res = requests.get(url, headers=ua, cookies=DEF_COOKIES)
     soup = BeautifulSoup(res.text, 'lxml')
     for btn in soup.select('.action-bar a'):
         if '上頁' in btn.text:
@@ -204,7 +205,7 @@ if __name__ == '__main__':
         curres = 'https://www.ptt.cc/bbs/{}/index{}.html'.format(board, pagenum)
         useragent = {'User-Agent': ua.random}
         logging.debug('UA:{}'.format(useragent))
-        res = requests.get(curres, headers=useragent, cookies={'over18': '1'})
+        res = requests.get(curres, headers=useragent, cookies=DEF_COOKIES)
         soup = BeautifulSoup(res.text, 'lxml')
         logging.info(' Loading page: {}'.format(curres))
         for article in soup.select('.r-ent a'):
